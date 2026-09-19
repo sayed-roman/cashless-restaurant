@@ -1,1 +1,3 @@
-export default function Home() { return <main><h1>Cashless Restaurant</h1><p>Good Food. Great Moments.</p></main>; }
+import { Hero } from "@/components/home/hero";
+import { PopularDishes } from "@/components/home/popular-dishes";
+export default function Home() { return <main id="main"><Hero/><PopularDishes/></main>; }
