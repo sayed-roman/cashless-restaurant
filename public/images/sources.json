@@ -1,0 +1,30 @@
+{
+  "chicken": [
+    "https://images.unsplash.com/photo-1610057098265-05f2bcbedd55?auto=format&fit=crop&w=1200&q=85",
+    "https://unsplash.com/es/fotos/carne-cocida-en-plato-de-ceramica-blanca-Xt4yZUIpRTo"
+  ],
+  "spring-rolls": [
+    "https://images.unsplash.com/photo-1695712641569-05eee7b37b6d?auto=format&fit=crop&w=1200&q=85",
+    "https://unsplash.com/s/photos/spring-rolls"
+  ],
+  "citrus-drink": [
+    "https://images.unsplash.com/photo-1600271886742-f049cd451bba?auto=format&fit=crop&w=1200&q=85",
+    "https://unsplash.com/ko/s/%EC%82%AC%EC%A7%84/%EC%98%A4%EB%A0%8C%EC%A7%80-%EC%A3%BC%EC%8A%A4"
+  ],
+  "salad": [
+    "https://images.unsplash.com/photo-1692823548942-a3b06c13b607?auto=format&fit=crop&w=1200&q=85",
+    "https://unsplash.com/photos/a-bowl-of-salad-on-a-wooden-table-CLVxJUPB9p4"
+  ],
+  "pasta": [
+    "https://images.unsplash.com/photo-1676471771228-c4cdbfbd2a7f?auto=format&fit=crop&w=1200&q=85",
+    "https://unsplash.com/photos/a-white-plate-topped-with-a-pasta-dish-QSXPD_7_kuA"
+  ],
+  "interior": [
+    "https://images.unsplash.com/photo-1713195959066-8698d2aa817e?auto=format&fit=crop&w=1200&q=85",
+    "https://unsplash.com/photos/a-restaurant-with-tables-and-chairs-and-a-brick-wall-2KNRNZpU4Tk"
+  ],
+  "brownie": [
+    "https://images.unsplash.com/photo-1619291139182-652832e3249b?w=1200&q=85&fit=crop&auto=format",
+    "https://unsplash.com/photos/brown-cookies-on-white-paper-uFKfauG17Eg"
+  ]
+}
