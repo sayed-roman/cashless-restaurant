@@ -3,23 +3,28 @@ import Link from "next/link";
 const panels = [
   {
     name: "Starters",
-    image: "spring-rolls",
+    image: "spring-rolls-warm.webp",
     caption: "Fresh & flavourful",
     style: "starter",
   },
   {
     name: "Main Course",
-    image: "chicken",
+    image: "chicken-warm.webp",
     caption: "Chef crafted",
     style: "main-course",
   },
   {
     name: "Desserts",
-    image: "brownie",
+    image: "brownie.jpg",
     caption: "Sweet endings",
     style: "dessert",
   },
-  { name: "Drinks", image: "drink", caption: "Sip & savour", style: "drinks" },
+  {
+    name: "Drinks",
+    image: "drink.jpg",
+    caption: "Sip & savour",
+    style: "drinks",
+  },
 ];
 export function MenuShowcase() {
   return (
@@ -36,7 +41,7 @@ export function MenuShowcase() {
         >
           <div className="menu-panel-photo">
             <Image
-              src={`/images/${panel.image}.jpg`}
+              src={`/images/${panel.image}`}
               alt={panel.name}
               fill
               sizes="(max-width: 700px) 50vw, 30vw"

@@ -18,7 +18,7 @@ body {
   margin: 0;
   background: var(--cream);
   color: var(--ink);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-body), Arial, sans-serif;
   font-size: 16px;
   line-height: 1.65;
 }
@@ -32,13 +32,13 @@ h1,
 h2,
 h3,
 .brand {
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: var(--font-heading), Georgia, serif;
 }
 h1,
 h2,
 h3 {
-  font-weight: 400;
-  line-height: 1.1;
+  font-weight: 600;
+  line-height: 1.08;
 }
 a {
   color: inherit;
@@ -208,7 +208,7 @@ section {
 }
 .brand span {
   display: block;
-  font-family: Arial, sans-serif;
+  font-family: var(--font-body), Arial, sans-serif;
   font-size: 10px;
   letter-spacing: 5px;
   margin-top: 10px;
@@ -253,7 +253,7 @@ section {
   margin-top: 8px;
 }
 .footer-motto {
-  font-family: Georgia, serif;
+  font-family: var(--font-heading), Georgia, serif;
   font-style: italic;
   font-size: 30px;
   line-height: 1.5;
@@ -970,7 +970,7 @@ section {
   z-index: 1;
   top: 45px;
   left: 35px;
-  font-family: Georgia, serif;
+  font-family: var(--font-heading), Georgia, serif;
   font-style: italic;
   color: white;
   font-size: 39px;
@@ -1133,5 +1133,57 @@ select {
   }
   .form-grid input {
     min-width: 0;
+  }
+}
+
+/* Shared type rhythm: locally hosted fonts keep every route consistent. */
+body {
+  -webkit-font-smoothing: antialiased;
+}
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+.hero h1 {
+  font-weight: 600;
+  letter-spacing: -0.035em;
+}
+.section-title {
+  letter-spacing: -0.025em;
+}
+.hero-description,
+.about-copy > p {
+  line-height: 1.8;
+}
+.popular-card h3,
+.product-copy h3 {
+  font-weight: 600;
+  line-height: 1.15;
+}
+.menu-panel-copy h2 {
+  font-weight: 600;
+  letter-spacing: 0.045em;
+}
+@media (max-width: 700px) {
+  .hero h1 {
+    font-size: clamp(46px, 12vw, 62px);
+  }
+  .hero-description {
+    font-size: 16px;
+  }
+}
+/* Desktop hero: slightly smaller headline and narrower fade */
+@media (min-width: 701px) {
+  .hero h1 {
+    font-size: clamp(44px, 5.2vw, 76px);
+  }
+
+  .hero-shade {
+    background: linear-gradient(
+      90deg,
+      var(--cream) 0%,
+      transparent 11%
+    );
   }
 }

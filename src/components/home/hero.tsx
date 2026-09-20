@@ -4,11 +4,17 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 const slides = [
   {
-    image: "/images/chicken.jpg",
+    image: "/images/chicken-warm.webp",
     alt: "Herb roasted chicken with rice and greens",
   },
-  { image: "/images/pasta.jpg", alt: "Freshly prepared tomato and herb pasta" },
-  { image: "/images/brownie.jpg", alt: "Rich chocolate brownie" },
+  {
+    image: "/images/pasta-warm.webp",
+    alt: "Freshly prepared tomato and herb pasta",
+  },
+  {
+    image: "/images/salad.jpg",
+    alt: "Fresh garden salad",
+  },
 ];
 export function Hero() {
   const [active, setActive] = useState(0);

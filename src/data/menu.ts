@@ -22,7 +22,7 @@ export const dishes: Dish[] = [
     name: "Crispy Spring Rolls",
     category: "Starters",
     price: 220,
-    image: "/images/spring-rolls.jpg",
+    image: "/images/spring-rolls-warm.webp",
     description:
       "Golden rolls filled with crisp vegetables, served with a sweet chilli dipping sauce.",
     ingredients: ["Seasonal vegetables", "Wheat pastry", "Sweet chilli sauce"],
@@ -34,7 +34,7 @@ export const dishes: Dish[] = [
     name: "Herb Roasted Chicken",
     category: "Main Course",
     price: 480,
-    image: "/images/chicken.jpg",
+    image: "/images/chicken-warm.webp",
     description:
       "Tender herb-roasted chicken with fragrant rice and seasonal greens.",
     ingredients: ["Chicken", "Rice", "Seasonal greens", "Herbs"],
@@ -58,7 +58,7 @@ export const dishes: Dish[] = [
     name: "Tomato & Herb Pasta",
     category: "Main Course",
     price: 390,
-    image: "/images/pasta.jpg",
+    image: "/images/pasta-warm.webp",
     description:
       "Pasta tossed in a rich tomato sauce, finished with parmesan and fresh herbs.",
     ingredients: ["Pasta", "Tomatoes", "Parmesan", "Herbs"],
