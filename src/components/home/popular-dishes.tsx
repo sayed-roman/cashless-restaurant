@@ -1,42 +1,85 @@
 "use client";
+
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
+import useEmblaCarousel from "embla-carousel-react";
+import AutoScroll from "embla-carousel-auto-scroll";
 import { dishes } from "@/data/menu";
+import styles from "./popular-dishes.module.css";
+
 export function PopularDishes() {
-  const track = useRef<HTMLDivElement>(null);
-  const [edges, setEdges] = useState({ start: true, end: false });
+  const [autoScroll] = useState(() =>
+    AutoScroll({
+      speed: 0.55,
+      startDelay: 800,
+      playOnInit: false,
+      stopOnInteraction: true,
+      stopOnMouseEnter: false,
+      stopOnFocusIn: false,
+    }),
+  );
+  const [viewportRef, carousel] = useEmblaCarousel(
+    { loop: true, align: "start" },
+    [autoScroll],
+  );
+  const [enabled, setEnabled] = useState(true);
+  const [hovered, setHovered] = useState(false);
+  const [focused, setFocused] = useState(false);
+  const [dragging, setDragging] = useState(false);
+
   useEffect(() => {
-    const el = track.current;
-    if (!el) return;
-    const update = () =>
-      setEdges({
-        start: el.scrollLeft < 5,
-        end: el.scrollLeft + el.clientWidth >= el.scrollWidth - 5,
-      });
-    update();
-    el.addEventListener("scroll", update, { passive: true });
-    const observer = new ResizeObserver(update);
-    observer.observe(el);
+    if (!carousel) return;
+    const down = () => setDragging(true);
+    const up = () => setDragging(false);
+    carousel.on("pointerDown", down).on("pointerUp", up);
     return () => {
-      el.removeEventListener("scroll", update);
-      observer.disconnect();
+      carousel.off("pointerDown", down).off("pointerUp", up);
     };
-  }, []);
-  function move(direction: number) {
-    const el = track.current;
-    if (el)
-      el.scrollBy({
-        left:
-          direction *
-          ((el.firstElementChild?.getBoundingClientRect().width ?? 300) + 24),
-        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
-          ? "instant"
-          : "smooth",
-      });
+  }, [carousel]);
+
+  useEffect(() => {
+    if (!carousel) return;
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const syncMotion = () => {
+      if (
+        !enabled ||
+        hovered ||
+        focused ||
+        dragging ||
+        document.hidden ||
+        reducedMotion.matches
+      ) {
+        autoScroll.stop();
+      } else {
+        autoScroll.play();
+      }
+    };
+    syncMotion();
+    reducedMotion.addEventListener("change", syncMotion);
+    document.addEventListener("visibilitychange", syncMotion);
+    carousel.on("reInit", syncMotion);
+    return () => {
+      autoScroll.stop();
+      reducedMotion.removeEventListener("change", syncMotion);
+      document.removeEventListener("visibilitychange", syncMotion);
+      carousel.off("reInit", syncMotion);
+    };
+  }, [carousel, autoScroll, enabled, hovered, focused, dragging]);
+
+  function move(direction: "previous" | "next") {
+    if (!carousel) return;
+    setEnabled(false);
+    autoScroll.stop();
+    const instant = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    if (direction === "next") carousel.scrollNext(instant);
+    else carousel.scrollPrev(instant);
   }
+
   return (
-    <section className="section wrap popular" aria-labelledby="popular-title">
+    <section className="section wrap" aria-labelledby="popular-title">
       <div className="section-heading">
         <div>
           <p className="eyebrow">Our most loved flavours</p>
@@ -44,53 +87,97 @@ export function PopularDishes() {
             Popular Dishes
           </h2>
         </div>
-        <div className="carousel-buttons">
+        <div className={styles.controls}>
           <button
+            type="button"
+            aria-label={
+              enabled
+                ? "Pause automatic scrolling"
+                : "Resume automatic scrolling"
+            }
+            aria-controls="popular-carousel"
+            aria-pressed={!enabled}
+            onClick={() => setEnabled((value) => !value)}
+          >
+            <span aria-hidden="true">{enabled ? "Ⅱ" : "▶"}</span>
+          </button>
+          <button
+            type="button"
             aria-label="Previous dishes"
-            onClick={() => move(-1)}
-            disabled={edges.start}
+            aria-controls="popular-carousel"
+            onClick={() => move("previous")}
           >
             ←
           </button>
           <button
+            type="button"
             aria-label="Next dishes"
-            onClick={() => move(1)}
-            disabled={edges.end}
+            aria-controls="popular-carousel"
+            onClick={() => move("next")}
           >
             →
           </button>
         </div>
       </div>
       <div
-        ref={track}
-        className="popular-track"
+        id="popular-carousel"
+        ref={viewportRef}
+        className={styles.viewport}
+        role="region"
+        aria-roledescription="carousel"
         aria-label="Popular dishes"
         tabIndex={0}
-        onKeyDown={(e) => {
-          if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
-            e.preventDefault();
-            move(e.key === "ArrowRight" ? 1 : -1);
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        onFocusCapture={() => setFocused(true)}
+        onBlurCapture={(event) => {
+          if (!event.currentTarget.contains(event.relatedTarget))
+            setFocused(false);
+        }}
+        onKeyDown={(event) => {
+          if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
+            event.preventDefault();
+            move(event.key === "ArrowRight" ? "next" : "previous");
           }
         }}
       >
-        {dishes.map((dish) => (
-          <Link
-            href={`/menu/${dish.slug}/`}
-            className="popular-card"
-            key={dish.slug}
-          >
-            <div className="popular-photo">
-              <Image
-                src={dish.image}
-                alt={dish.name}
-                fill
-                sizes="(max-width: 700px) 85vw, 33vw"
-              />
+        <div className={styles.track}>
+          {dishes.map((dish, index) => (
+            <div
+              className={styles.slide}
+              key={dish.slug}
+              role="group"
+              aria-roledescription="slide"
+              aria-label={`${index + 1} of ${dishes.length}`}
+            >
+              <Link
+                href={`/menu/${dish.slug}/`}
+                className={styles.card}
+                draggable={false}
+              >
+                <div className={styles.photo}>
+                  <Image
+                    src={dish.image}
+                    alt={dish.name}
+                    fill
+                    draggable={false}
+                    sizes="(max-width: 700px) 82vw, (max-width: 1000px) 50vw, 400px"
+                  />
+                  <span className={styles.photoLink} aria-hidden="true">
+                    View Details ↗
+                  </span>
+                </div>
+                <div className={styles.copy}>
+                  <p>{dish.category}</p>
+                  <h3>{dish.name}</h3>
+                  <span className={styles.details}>
+                    View Details <span aria-hidden="true">↗</span>
+                  </span>
+                </div>
+              </Link>
             </div>
-            <h3>{dish.name}</h3>
-            <p>{dish.category}</p>
-          </Link>
-        ))}
+          ))}
+        </div>
       </div>
     </section>
   );

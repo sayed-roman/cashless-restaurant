@@ -1,0 +1,147 @@
+.viewport {
+  overflow: hidden;
+  padding: 6px 0 14px;
+  touch-action: pan-y pinch-zoom;
+}
+.track {
+  display: flex;
+  margin-left: -24px;
+}
+.slide {
+  flex: 0 0 33.333333%;
+  min-width: 0;
+  padding-left: 24px;
+}
+.card {
+  display: block;
+  height: 100%;
+  overflow: hidden;
+  border: 1px solid #e6e0d5;
+  border-radius: 6px;
+  background: #fffdf9;
+  transition:
+    border-color 200ms ease,
+    box-shadow 200ms ease;
+}
+.card:hover,
+.card:focus-visible {
+  border-color: #b5a478;
+  box-shadow: 0 6px 18px #173d3210;
+}
+.card:focus-visible {
+  outline-offset: -4px;
+}
+.photo {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+}
+.photo img {
+  transition: transform 500ms ease;
+}
+.card:hover img,
+.card:focus-visible img {
+  transform: scale(1.045);
+}
+.photoLink {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  padding: 8px 14px;
+  background: #faf7f2f2;
+  color: var(--green);
+  font-size: 14px;
+  border-radius: 3px;
+  opacity: 0;
+  transform: translateY(5px);
+  transition:
+    opacity 200ms ease,
+    transform 200ms ease;
+}
+.card:hover .photoLink,
+.card:focus-visible .photoLink {
+  opacity: 1;
+  transform: translateY(0);
+}
+.copy {
+  padding: 22px 24px 24px;
+}
+.copy p {
+  font-size: 12px;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.copy h3 {
+  font-size: 28px;
+  line-height: 1.18;
+  margin: 9px 0 18px;
+}
+.details {
+  display: inline-flex;
+  gap: 10px;
+  align-items: center;
+  font-size: 14px;
+  color: var(--green);
+  border-bottom: 1px solid #bba970;
+  padding-bottom: 3px;
+}
+.controls {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.controls button {
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--green);
+  font-size: 20px;
+  transition: background 200ms ease;
+}
+.controls button:hover {
+  background: #e9ece4;
+}
+@media (max-width: 1000px) {
+  .slide {
+    flex-basis: 50%;
+  }
+}
+@media (max-width: 700px) {
+  .slide {
+    flex-basis: 86%;
+    padding-left: 16px;
+  }
+  .track {
+    margin-left: -16px;
+  }
+  .copy {
+    padding: 18px 20px 22px;
+  }
+  .copy h3 {
+    font-size: 26px;
+  }
+  .controls {
+    gap: 4px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    max-width: 96px;
+  }
+  .controls button {
+    width: 44px;
+    height: 44px;
+  }
+  .photoLink {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .photo img,
+  .photoLink,
+  .controls button {
+    transition: none;
+  }
+}
