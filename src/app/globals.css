@@ -566,7 +566,7 @@ section {
   margin: auto;
 }
 .menu-panel {
-  min-height: 500px;
+  min-height: 580px;
   display: flex;
   flex-direction: column;
   position: relative;
