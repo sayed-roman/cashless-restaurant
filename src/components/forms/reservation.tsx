@@ -1,6 +1,9 @@
 "use client";
 import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { authClient } from "@/lib/auth-client";
 import {
   futureReservation,
   localDateValue,
@@ -8,6 +11,10 @@ import {
 } from "@/lib/validation";
 const times = ["12:00", "13:00", "14:00", "18:00", "19:00", "20:00", "21:00"];
 export function Reservation() {
+  const { data: session, isPending, error: sessionError, refetch } = authClient.useSession();
+  const router = useRouter();
+  const [submitting, setSubmitting] = useState(false);
+  const loginUrl = "/login?next=%2F%23reservation";
   const [error, setError] = useState("");
   const [confirmation, setConfirmation] = useState("");
   return (
@@ -30,7 +37,19 @@ export function Reservation() {
           <p className="eyebrow">Plan your visit</p>
           <h2 className="section-title">Table Reservation</h2>
           <p className="section-subtitle">A seat for every special moment.</p>
-          {confirmation ? (
+          {isPending ? (
+            <p role="status">Checking your account…</p>
+          ) : sessionError ? (
+            <div>
+              <p role="alert">Unable to check your account. Please try again.</p>
+              <button className="button outline" onClick={() => void refetch()}>Try again</button>
+            </div>
+          ) : !session ? (
+            <div>
+              <p className="section-subtitle">Please log in to book your table.</p>
+              <Link className="button" href={loginUrl}>Log in to book a table</Link>
+            </div>
+          ) : confirmation ? (
             <div role="status" className="success-panel">
               <h3>Thank you, {confirmation}.</h3>
               <p>
@@ -46,8 +65,9 @@ export function Reservation() {
             </div>
           ) : (
             <form
-              onSubmit={(event) => {
+              onSubmit={async (event) => {
                 event.preventDefault();
+                if (submitting) return;
                 const data = new FormData(event.currentTarget);
                 const name = String(data.get("name")).trim();
                 if (name.length < 2) {
@@ -70,7 +90,23 @@ export function Reservation() {
                   return;
                 }
                 setError("");
-                setConfirmation(name);
+                setSubmitting(true);
+                try {
+                  const result = await authClient.getSession();
+                  if (result.error) {
+                    setError("Unable to verify your account. Please try again.");
+                    return;
+                  }
+                  if (!result.data?.user) {
+                    router.push(loginUrl);
+                    return;
+                  }
+                  setConfirmation(name);
+                } catch {
+                  setError("Unable to connect. Please try again.");
+                } finally {
+                  setSubmitting(false);
+                }
               }}
             >
               <div className="form-grid">
@@ -129,8 +165,8 @@ export function Reservation() {
                     ))}
                   </select>
                 </label>
-                <button className="button booking-submit" type="submit">
-                  Book a Table
+                <button className="button booking-submit" type="submit" disabled={submitting}>
+                  {submitting ? "Checking…" : "Book a Table"}
                 </button>
               </div>
               <p className="form-note">

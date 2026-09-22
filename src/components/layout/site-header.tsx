@@ -1,4 +1,5 @@
 "use client";
+import { AccountMenu } from "@/components/auth/account-menu";
 import { CartButton } from "@/components/cart/cart-drawer";
 import Link from "next/link";
 import { useState } from "react";
@@ -46,6 +47,7 @@ export function SiteHeader() {
           <Link className="button gold header-book" href="/#reservation">
             Book a Table
           </Link>
+          <AccountMenu />
         </div>
       </header>
     </>
