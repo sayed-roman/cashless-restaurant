@@ -1,7 +1,7 @@
 "use client";
 import { createContext, useContext, useReducer, useState } from "react";
 import { cartReducer, CartAction, CartLine } from "@/lib/cart";
-import { dishes } from "@/data/menu";
+import { MenuProvider, useMenu } from "@/components/menu/menu-provider";
 type CartContextValue = {
   lines: CartLine[];
   dispatch: React.Dispatch<CartAction>;
@@ -12,7 +12,18 @@ type CartContextValue = {
 };
 const CartContext = createContext<CartContextValue | null>(null);
 export function CartProvider({ children }: { children: React.ReactNode }) {
-  const [lines, dispatch] = useReducer(cartReducer, []);
+  return (
+    <MenuProvider>
+      <CartState>{children}</CartState>
+    </MenuProvider>
+  );
+}
+function CartState({ children }: { children: React.ReactNode }) {
+  const { dishes } = useMenu();
+  const [storedLines, dispatch] = useReducer(cartReducer, []);
+  const lines = storedLines.filter((line) =>
+    dishes.some((dish) => dish.slug === line.slug),
+  );
   const [open, setOpen] = useState(false);
   const count = lines.reduce((sum, line) => sum + line.quantity, 0);
   const total = lines.reduce(

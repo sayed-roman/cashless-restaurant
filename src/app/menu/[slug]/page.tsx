@@ -1,20 +1,19 @@
+import { connection } from "next/server";
+import { getDish } from "@/server/menu/queries";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { dishes, formatPrice } from "@/data/menu";
+import { formatPrice } from "@/data/menu";
 import { OrderDish } from "@/components/menu/order-dish";
-export function generateStaticParams() {
-  return dishes.map((dish) => ({ slug: dish.slug }));
-}
-export const dynamicParams = false;
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }) {
+  await connection();
   const { slug } = await params;
   return {
-    title: `${dishes.find((d) => d.slug === slug)?.name ?? "Dish"} | Cashless Restaurant`,
+    title: `${(await getDish(slug))?.name ?? "Dish"} | Cashless Restaurant`,
   };
 }
 export default async function DishPage({
@@ -22,8 +21,9 @@ export default async function DishPage({
 }: {
   params: Promise<{ slug: string }>;
 }) {
+  await connection();
   const { slug } = await params;
-  const dish = dishes.find((d) => d.slug === slug);
+  const dish = await getDish(slug);
   if (!dish) notFound();
   return (
     <main id="main" className="section wrap">

@@ -1,11 +1,14 @@
 "use client";
+import { useMenu } from "@/components/menu/menu-provider";
+import { MenuStatus } from "@/components/menu/menu-status";
 import Link from "next/link";
 import { useState } from "react";
 import { useCart } from "@/components/cart/cart-provider";
-import { dishes, formatPrice } from "@/data/menu";
+import { formatPrice } from "@/data/menu";
 import { validPhone } from "@/lib/validation";
 type Confirmation = { name: string; total: number; reference: string };
 export function Checkout() {
+  const { dishes, status } = useMenu();
   const { lines, total, dispatch, setOpen } = useCart();
   const [error, setError] = useState("");
   const [confirmation, setConfirmation] = useState<Confirmation | null>(null);
@@ -24,6 +27,7 @@ export function Checkout() {
         </Link>
       </div>
     );
+  if (status !== "ready") return <MenuStatus />;
   if (!lines.length)
     return (
       <div className="empty-state center">

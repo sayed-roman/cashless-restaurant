@@ -1,10 +1,13 @@
 "use client";
+import { useMenu } from "@/components/menu/menu-provider";
+import { MenuStatus } from "@/components/menu/menu-status";
 import { useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useCart } from "./cart-provider";
-import { dishes, formatPrice } from "@/data/menu";
+import { formatPrice } from "@/data/menu";
 export function CartDrawer() {
+  const { dishes, status } = useMenu();
   const { lines, dispatch, total, open, setOpen } = useCart();
   const ref = useRef<HTMLDialogElement>(null);
   useEffect(() => {
@@ -41,7 +44,9 @@ export function CartDrawer() {
             ×
           </button>
         </div>
-        {lines.length === 0 ? (
+        {status !== "ready" ? (
+          <MenuStatus />
+        ) : lines.length === 0 ? (
           <div className="empty-state">
             <p>Your cart is waiting for something delicious.</p>
             <Link

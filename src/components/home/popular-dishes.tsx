@@ -1,14 +1,17 @@
 "use client";
+import { useMenu } from "@/components/menu/menu-provider";
+import { MenuStatus } from "@/components/menu/menu-status";
 
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import AutoScroll from "embla-carousel-auto-scroll";
-import { dishes } from "@/data/menu";
+
 import styles from "./popular-dishes.module.css";
 
 export function PopularDishes() {
+  const { dishes, status } = useMenu();
   const [autoScroll] = useState(() =>
     AutoScroll({
       speed: 0.55,
@@ -78,6 +81,13 @@ export function PopularDishes() {
     else carousel.scrollPrev(instant);
   }
 
+  if (status !== "ready")
+    return (
+      <section className="section wrap">
+        <MenuStatus />
+      </section>
+    );
+  if (!dishes.length) return null;
   return (
     <section className="section wrap" aria-labelledby="popular-title">
       <div className="section-heading">
