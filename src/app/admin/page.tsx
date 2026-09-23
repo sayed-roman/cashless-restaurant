@@ -1,9 +1,11 @@
+import { reservationSummary } from "@/server/reservations/service";
 import Link from "next/link";
 import { listAdminFoods } from "@/server/admin/foods";
 import styles from "@/components/admin/admin-shell.module.css";
 export const metadata = { title: "Admin overview | Cashless Restaurant" };
 export default async function AdminPage() {
   const foods = await listAdminFoods();
+  const bookings = await reservationSummary();
   const available = foods.filter((food) => food.available).length;
   return (
     <main id="main">
@@ -24,6 +26,15 @@ export default async function AdminPage() {
           <strong>{foods.length - available}</strong>
         </div>
       </div>
+      <section className={styles.panel} style={{ marginBottom: 24 }}>
+        <h2>Table reservations</h2>
+        <p>
+          {bookings.total} total · {bookings.pending} pending confirmation
+        </p>
+        <Link className="button" href="/admin/reservations">
+          Manage reservations →
+        </Link>
+      </section>
       <section className={styles.panel}>
         <h2>Keep your menu fresh</h2>
         <p>Add new dishes, update prices and choose what is available today.</p>

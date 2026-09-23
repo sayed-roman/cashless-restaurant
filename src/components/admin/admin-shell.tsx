@@ -12,6 +12,7 @@ function Navigation({ close }: { close: () => void }) {
       {[
         ["Overview", "/admin"],
         ["Menu Management", "/admin/menu"],
+        ["Reservations", "/admin/reservations"],
       ].map(([label, href]) => (
         <Link
           key={href}
@@ -40,7 +41,9 @@ export function AdminShell({
   const pathname = usePathname();
   const title = pathname.startsWith("/admin/menu")
     ? "Menu Management"
-    : "Overview";
+    : pathname.startsWith("/admin/reservations")
+      ? "Reservations"
+      : "Overview";
   function close() {
     dialog.current?.close();
   }
