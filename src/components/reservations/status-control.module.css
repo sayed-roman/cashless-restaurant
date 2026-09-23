@@ -1,0 +1,10 @@
+.form { display:flex; align-items:flex-end; justify-content:flex-end; flex-wrap:wrap; gap:12px; border-top:1px solid #e3e7dd; padding-top:18px; margin-top:20px; }
+.field { display:grid; gap:8px; width:240px; max-width:100%; }
+.field span { font-size:12px; font-weight:600; color:#65766a; }
+.form .field select { width:100%; height:48px; padding:0 14px; border:1px solid #b9c8b9; border-radius:8px; background:#fffefa; font:inherit; color:#163e30; }
+.save { height:48px; padding:0 22px; border:1px solid #163e30; border-radius:8px; background:#163e30; color:#fffdf7; font:inherit; font-size:14px; font-weight:600; cursor:pointer; transition:background .15s,box-shadow .15s; }
+.save:hover { background:#24533f; box-shadow:0 4px 12px #163e3020; }
+.save:disabled { opacity:.6; cursor:wait; }
+.form :is(select,button):focus-visible { outline:2px solid #aa8b35; outline-offset:3px; }
+.error { flex-basis:100%; color:#942c24; white-space:normal; }
+@media(max-width:550px) { .field {width:100%;} .save {width:100%;} }

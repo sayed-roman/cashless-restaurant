@@ -3,15 +3,22 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { createReservation } from "@/app/reservations/actions";
+import { reservationTimes } from "@/lib/reservation-rules";
 import { authClient } from "@/lib/auth-client";
 import {
   futureReservation,
   localDateValue,
   validPhone,
 } from "@/lib/validation";
-const times = ["12:00", "13:00", "14:00", "18:00", "19:00", "20:00", "21:00"];
+const times = reservationTimes;
 export function Reservation() {
-  const { data: session, isPending, error: sessionError, refetch } = authClient.useSession();
+  const {
+    data: session,
+    isPending,
+    error: sessionError,
+    refetch,
+  } = authClient.useSession();
   const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
   const loginUrl = "/login?next=%2F%23reservation";
@@ -41,20 +48,32 @@ export function Reservation() {
             <p role="status">Checking your account…</p>
           ) : sessionError ? (
             <div>
-              <p role="alert">Unable to check your account. Please try again.</p>
-              <button className="button outline" onClick={() => void refetch()}>Try again</button>
+              <p role="alert">
+                Unable to check your account. Please try again.
+              </p>
+              <button className="button outline" onClick={() => void refetch()}>
+                Try again
+              </button>
             </div>
           ) : !session ? (
             <div>
-              <p className="section-subtitle">Please log in to book your table.</p>
-              <Link className="button" href={loginUrl}>Log in to book a table</Link>
+              <p className="section-subtitle">
+                Please log in to book your table.
+              </p>
+              <Link className="button" href={loginUrl}>
+                Log in to book a table
+              </Link>
             </div>
           ) : confirmation ? (
             <div role="status" className="success-panel">
-              <h3>Thank you, {confirmation}.</h3>
+              <h3>Reservation request received.</h3>
+              <p>Reference: {confirmation}</p>
+              <Link className="button" href="/reservations">
+                My Reservations
+              </Link>
               <p>
-                Your demo reservation request is complete. No table has been
-                booked.
+                Your reservation request is saved and awaiting restaurant
+                confirmation.
               </p>
               <button
                 className="button outline"
@@ -92,16 +111,16 @@ export function Reservation() {
                 setError("");
                 setSubmitting(true);
                 try {
-                  const result = await authClient.getSession();
-                  if (result.error) {
-                    setError("Unable to verify your account. Please try again.");
-                    return;
-                  }
-                  if (!result.data?.user) {
+                  const result = await createReservation(data);
+                  if (result.loginRequired) {
                     router.push(loginUrl);
                     return;
                   }
-                  setConfirmation(name);
+                  if (result.error) {
+                    setError(result.error);
+                    return;
+                  }
+                  if (result.id) setConfirmation(result.id);
                 } catch {
                   setError("Unable to connect. Please try again.");
                 } finally {
@@ -165,12 +184,16 @@ export function Reservation() {
                     ))}
                   </select>
                 </label>
-                <button className="button booking-submit" type="submit" disabled={submitting}>
-                  {submitting ? "Checking…" : "Book a Table"}
+                <button
+                  className="button booking-submit"
+                  type="submit"
+                  disabled={submitting}
+                >
+                  {submitting ? "Booking…" : "Book a Table"}
                 </button>
               </div>
               <p className="form-note">
-                Demo booking · no real table is reserved. Times are in
+                Bookings require restaurant confirmation. Times are in
                 Bangladesh time.
               </p>
               {error && (

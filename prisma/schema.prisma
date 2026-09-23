@@ -35,14 +35,15 @@ model Food {
 }
 
 model User {
-  id            String    @id
+  id            String        @id
   name          String
-  email         String    @unique
-  emailVerified Boolean   @default(false)
+  email         String        @unique
+  emailVerified Boolean       @default(false)
   image         String?
-  role          String    @default("customer")
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  role          String        @default("customer")
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  reservations  Reservation[]
   sessions      Session[]
   accounts      Account[]
 }
@@ -97,4 +98,27 @@ model RateLimit {
   key         String @unique
   count       Int
   lastRequest BigInt
+}
+
+enum ReservationStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+}
+
+model Reservation {
+  id          String            @id @default(cuid())
+  userId      String
+  user        User              @relation(fields: [userId], references: [id], onDelete: Restrict)
+  name        String
+  phone       String
+  scheduledAt DateTime
+  guests      Int
+  status      ReservationStatus @default(PENDING)
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  @@unique([userId, scheduledAt])
+  @@index([status, scheduledAt])
 }
