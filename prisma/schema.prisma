@@ -32,6 +32,7 @@ model Food {
   updatedAt   DateTime     @updatedAt
 
   @@index([available, category, sortOrder])
+  orderItems  OrderItem[]
 }
 
 model User {
@@ -46,6 +47,7 @@ model User {
   reservations  Reservation[]
   sessions      Session[]
   accounts      Account[]
+  orders        Order[]
 }
 
 model Session {
@@ -121,4 +123,45 @@ model Reservation {
 
   @@unique([userId, scheduledAt])
   @@index([status, scheduledAt])
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PREPARING
+  READY
+  COMPLETED
+  CANCELLED
+}
+
+model Order {
+  id           String      @id @default(cuid())
+  userId       String
+  user         User        @relation(fields: [userId], references: [id], onDelete: Restrict)
+  customerName String
+  phone        String
+  notes        String?
+  status       OrderStatus @default(PENDING)
+  totalMinor   Int
+  currency     String      @default("bdt") @db.VarChar(3)
+  items        OrderItem[]
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  @@index([userId, createdAt])
+  @@index([status, createdAt])
+}
+
+model OrderItem {
+  id           String @id @default(cuid())
+  orderId      String
+  order        Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  foodId       String
+  food         Food   @relation(fields: [foodId], references: [id], onDelete: Restrict)
+  nameSnapshot String
+  priceMinor   Int
+  quantity     Int
+
+  @@index([orderId])
+  @@index([foodId])
 }

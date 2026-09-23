@@ -2,7 +2,7 @@
 import { useMenu } from "@/components/menu/menu-provider";
 import { MenuStatus } from "@/components/menu/menu-status";
 import Link from "next/link";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useCart } from "@/components/cart/cart-provider";
 import { formatPrice } from "@/data/menu";
 import { validPhone } from "@/lib/validation";
@@ -12,15 +12,17 @@ export function Checkout() {
   const { lines, total, dispatch, setOpen } = useCart();
   const [error, setError] = useState("");
   const [confirmation, setConfirmation] = useState<Confirmation | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const submitLock = useRef(false);
   if (confirmation)
     return (
       <div className="checkout-success">
-        <p className="eyebrow">Demo order complete</p>
+        <p className="eyebrow">Order received</p>
         <h1 className="section-title">Thank you, {confirmation.name}.</h1>
-        <p>Your demo order total is {formatPrice(confirmation.total)}.</p>
+        <p>Your order total is {formatPrice(confirmation.total)}.</p>
         <p>Reference: {confirmation.reference}</p>
         <p className="muted">
-          This order was not sent to a restaurant. No payment was taken.
+          Your order is pending confirmation. No payment has been collected.
         </p>
         <Link href="/" className="button">
           Back to Home
@@ -47,8 +49,9 @@ export function Checkout() {
       <div className="checkout-grid">
         <form
           className="checkout-form"
-          onSubmit={(event) => {
+          onSubmit={async (event) => {
             event.preventDefault();
+            if (submitLock.current) return;
             const data = new FormData(event.currentTarget);
             const name = String(data.get("name")).trim();
             if (name.length < 2) {
@@ -59,12 +62,32 @@ export function Checkout() {
               setError("Please enter a valid phone number.");
               return;
             }
-            setConfirmation({
-              name,
-              total,
-              reference: `DEMO-${crypto.randomUUID().slice(0, 8).toUpperCase()}`,
-            });
-            dispatch({ type: "clear" });
+            submitLock.current = true;
+            setSubmitting(true);
+            setError("");
+            try {
+              const response = await fetch("/api/orders", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name, phone: data.get("phone"), notes: data.get("notes"), lines }),
+              });
+              const result = await response.json().catch(() => null);
+              if (!response.ok) throw new Error(result?.error ?? "Unable to place order.");
+              if (!result || typeof result.id !== "string" || !Number.isSafeInteger(result.totalMinor)) {
+                throw new Error("Unable to confirm your order. Please contact the restaurant before ordering again.");
+              }
+              setConfirmation({
+                name,
+                total: result.totalMinor / 100,
+                reference: result.id,
+              });
+              dispatch({ type: "clear" });
+            } catch (submitError) {
+              setError(submitError instanceof Error ? submitError.message : "Unable to place order.");
+            } finally {
+              submitLock.current = false;
+              setSubmitting(false);
+            }
           }}
         >
           <h2>Pickup details</h2>
@@ -98,16 +121,15 @@ export function Checkout() {
             />
           </label>
           <div className="demo-callout">
-            This is a demo checkout. No real order will be placed and no payment
-            will be collected.
+            Place your pickup order. No online payment will be collected at this step.
           </div>
           {error && (
             <p className="form-error" role="alert">
               {error}
             </p>
           )}
-          <button className="button full" type="submit">
-            Place Demo Order · {formatPrice(total)}
+          <button className="button full" type="submit" disabled={submitting}>
+            {submitting ? "Placing order…" : `Place Order · ${formatPrice(total)}`}
           </button>
         </form>
         <aside className="order-summary">
