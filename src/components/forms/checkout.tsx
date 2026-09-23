@@ -24,8 +24,8 @@ export function Checkout() {
         <p className="muted">
           Your order is pending confirmation. No payment has been collected.
         </p>
-        <Link href="/" className="button">
-          Back to Home
+        <Link href="/account/orders" className="button">
+          View My Orders
         </Link>
       </div>
     );

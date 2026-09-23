@@ -38,7 +38,7 @@ export default async function AccountPage() {
           <p>Explore our dishes, choose your favourites and add them to your cart.</p>
           <div className={styles.links}>
             <Link className="button" href="/#order">Order Food →</Link>
-            <Link className={styles.secondary} href="/menu">Explore Menu ↗</Link>
+            <Link className={styles.secondary} href="/account/orders">My Orders ↗</Link>
           </div>
         </section>
       </div>
