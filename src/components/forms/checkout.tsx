@@ -6,29 +6,12 @@ import { useRef, useState } from "react";
 import { useCart } from "@/components/cart/cart-provider";
 import { formatPrice } from "@/data/menu";
 import { validPhone } from "@/lib/validation";
-type Confirmation = { name: string; total: number; reference: string };
 export function Checkout() {
   const { dishes, status } = useMenu();
-  const { lines, total, dispatch, setOpen } = useCart();
+  const { lines, total, setOpen } = useCart();
   const [error, setError] = useState("");
-  const [confirmation, setConfirmation] = useState<Confirmation | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const submitLock = useRef(false);
-  if (confirmation)
-    return (
-      <div className="checkout-success">
-        <p className="eyebrow">Order received</p>
-        <h1 className="section-title">Thank you, {confirmation.name}.</h1>
-        <p>Your order total is {formatPrice(confirmation.total)}.</p>
-        <p>Reference: {confirmation.reference}</p>
-        <p className="muted">
-          Your order is pending confirmation. No payment has been collected.
-        </p>
-        <Link href="/account/orders" className="button">
-          View My Orders
-        </Link>
-      </div>
-    );
   if (status !== "ready") return <MenuStatus />;
   if (!lines.length)
     return (
@@ -73,15 +56,11 @@ export function Checkout() {
               });
               const result = await response.json().catch(() => null);
               if (!response.ok) throw new Error(result?.error ?? "Unable to place order.");
-              if (!result || typeof result.id !== "string" || !Number.isSafeInteger(result.totalMinor)) {
+              if (!result || typeof result.id !== "string" || typeof result.checkoutUrl !== "string" || !Number.isSafeInteger(result.totalMinor)) {
                 throw new Error("Unable to confirm your order. Please contact the restaurant before ordering again.");
               }
-              setConfirmation({
-                name,
-                total: result.totalMinor / 100,
-                reference: result.id,
-              });
-              dispatch({ type: "clear" });
+              sessionStorage.setItem(`checkout-cart:${result.id}`, JSON.stringify(lines));
+              window.location.assign(result.checkoutUrl);
             } catch (submitError) {
               setError(submitError instanceof Error ? submitError.message : "Unable to place order.");
             } finally {
@@ -121,7 +100,7 @@ export function Checkout() {
             />
           </label>
           <div className="demo-callout">
-            Place your pickup order. No online payment will be collected at this step.
+            You will be redirected to Stripe Checkout. Use test card 4242 4242 4242 4242 in sandbox mode.
           </div>
           {error && (
             <p className="form-error" role="alert">

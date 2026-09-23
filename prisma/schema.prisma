@@ -125,6 +125,14 @@ model Reservation {
   @@index([status, scheduledAt])
 }
 
+enum PaymentStatus {
+  UNPAID
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
 enum OrderStatus {
   PENDING
   CONFIRMED
@@ -142,6 +150,9 @@ model Order {
   phone        String
   notes        String?
   status       OrderStatus @default(PENDING)
+  paymentStatus PaymentStatus @default(UNPAID)
+  stripeCheckoutSessionId String? @unique
+  paidAt       DateTime?
   totalMinor   Int
   currency     String      @default("bdt") @db.VarChar(3)
   items        OrderItem[]

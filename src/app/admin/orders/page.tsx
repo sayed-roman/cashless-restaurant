@@ -25,6 +25,7 @@ export default async function AdminOrdersPage({ searchParams }: { searchParams: 
         <dl className={styles.details}>
           <div><dt>Placed</dt><dd>{dateFormat.format(order.createdAt)}</dd></div>
           <div><dt>Phone</dt><dd>{order.phone}</dd></div>
+          <div><dt>Payment</dt><dd>{order.paymentStatus}</dd></div>
           <div><dt>Account email</dt><dd>{order.user.email}</dd></div>
         </dl>
         <ul className={styles.items}>{order.items.map(item => <li key={item.id}><span>{item.quantity} × {item.nameSnapshot}<small>{money(item.priceMinor)} each</small></span><strong>{money(item.quantity * item.priceMinor)}</strong></li>)}</ul>

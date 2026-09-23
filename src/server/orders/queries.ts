@@ -12,7 +12,7 @@ export async function getMyOrders(page = 1) {
     skip: (currentPage - 1) * 10,
     take: 11,
     select: {
-      id: true, createdAt: true, status: true, totalMinor: true, currency: true, notes: true,
+      id: true, createdAt: true, status: true, totalMinor: true, currency: true, paymentStatus: true, stripeCheckoutSessionId: true, notes: true,
       items: { select: { id: true, nameSnapshot: true, quantity: true, priceMinor: true } },
     },
   });

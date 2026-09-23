@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { resumePayment } from "./payment-actions";
 import { getMyOrders } from "@/server/orders/queries";
 import styles from "@/components/orders/orders.module.css";
 
@@ -14,7 +15,7 @@ function money(amount: number, currency: string) {
   return new Intl.NumberFormat("en-BD", { style: "currency", currency }).format(amount / 100);
 }
 export default async function MyOrdersPage({ searchParams }: {
-  searchParams: Promise<{ page?: string }>;
+  searchParams: Promise<{ page?: string; payment?: string }>;
 }) {
   const params = await searchParams;
   const { orders, hasMore, page } = await getMyOrders(Number(params.page ?? 1));
@@ -26,6 +27,7 @@ export default async function MyOrdersPage({ searchParams }: {
           <p>All your favourites, with their latest order status.</p></div>
         <Link href="/#order" className="button">Order Food →</Link>
       </header>
+      {params.payment && <p role="status">{params.payment === "closed" ? "This payment session is closed. Check your payment status before placing another order. If payment is pending, wait for confirmation." : "Payment is temporarily unavailable. Please try again shortly."}</p>}
       {!orders.length ? (
         <section className={styles.empty}>
           <h2>{page === 1 ? "Your first order starts here" : "No orders on this page"}</h2>
@@ -40,6 +42,10 @@ export default async function MyOrdersPage({ searchParams }: {
               <span className={styles.badge} data-status={order.status}>{statusLabels[order.status]}</span>
             </div>
             <p className={styles.reference}>Reference: {order.id}</p>
+            <p>Payment: <strong>{order.paymentStatus}</strong></p>
+            {order.stripeCheckoutSessionId && order.paymentStatus === "PENDING" && order.status !== "CANCELLED" && <form action={resumePayment}>
+              <input type="hidden" name="orderId" value={order.id} /><button className="button outline">Continue payment</button>
+            </form>}
             <ul className={styles.items}>{order.items.map(item => (
               <li key={item.id}><div><strong>{item.nameSnapshot}</strong><small>{item.quantity} × {money(item.priceMinor, order.currency)}</small></div><span>{money(item.quantity * item.priceMinor, order.currency)}</span></li>
             ))}</ul>

@@ -13,7 +13,7 @@ export async function listAdminOrders(page: number, status?: string) {
     skip: (currentPage - 1) * 20, take: 21,
     select: {
       id: true, customerName: true, phone: true, notes: true, status: true,
-      createdAt: true, totalMinor: true, currency: true,
+      createdAt: true, totalMinor: true, currency: true, paymentStatus: true, stripeCheckoutSessionId: true,
       user: { select: { email: true } },
       items: { select: { id: true, nameSnapshot: true, priceMinor: true, quantity: true } },
     },
