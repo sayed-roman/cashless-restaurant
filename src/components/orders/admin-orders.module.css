@@ -1,0 +1,23 @@
+.filter, .controls { display:flex; align-items:flex-end; gap:16px; flex-wrap:wrap; margin:24px 0; }
+.filter label, .controls label { display:grid; gap:8px; min-width:220px; }
+.filter select, .controls select { padding:12px; border:1px solid #b8c8bb; border-radius:8px; background:#fffdf8; color:#153e32; min-height:48px; }
+.list { display:grid; gap:24px; }
+.card { padding:28px; border:1px solid #deded2; background:#fffdf8; border-radius:16px; }
+.heading, .total, .items li { display:flex; justify-content:space-between; gap:20px; }
+.heading { align-items:center; flex-wrap:wrap; }
+.badge { padding:8px 14px; background:#e8eee2; color:#153e32; border-radius:30px; font-size:14px; }
+.reference { margin:12px 0 20px; overflow-wrap:anywhere; color:#586d63; font-size:14px; }
+.details { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:20px; margin-bottom:24px; }
+.details dt, .items small { color:#586d63; font-size:14px; }
+.details dd { margin:6px 0 0; overflow-wrap:anywhere; }
+.items { list-style:none; padding:0; }
+.items li { padding:14px 0; border-top:1px solid #e5e6dc; }
+.items small { display:block; }
+.items strong { white-space:nowrap; }
+.notes { white-space:pre-wrap; overflow-wrap:anywhere; }
+.total { border-top:1px solid #deded2; padding-top:18px; margin-top:18px; font-size:20px; }
+.controls { justify-content:flex-end; border-top:1px solid #deded2; padding-top:22px; margin-bottom:0; }
+.error { flex-basis:100%; color:#a13025; }
+.closed { text-align:right; margin-top:20px; color:#586d63; }
+.pages { display:flex; justify-content:center; gap:24px; margin:28px 0; }
+@media(max-width:640px) { .details { grid-template-columns:1fr; } .card { padding:18px; } .controls label, .controls button, .filter label { width:100%; min-width:0; } }

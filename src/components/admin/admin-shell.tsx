@@ -13,6 +13,7 @@ function Navigation({ close }: { close: () => void }) {
         ["Overview", "/admin"],
         ["Menu Management", "/admin/menu"],
         ["Reservations", "/admin/reservations"],
+        ["Orders", "/admin/orders"],
       ].map(([label, href]) => (
         <Link
           key={href}
@@ -43,7 +44,9 @@ export function AdminShell({
     ? "Menu Management"
     : pathname.startsWith("/admin/reservations")
       ? "Reservations"
-      : "Overview";
+      : pathname.startsWith("/admin/orders")
+        ? "Orders"
+        : "Overview";
   function close() {
     dialog.current?.close();
   }
