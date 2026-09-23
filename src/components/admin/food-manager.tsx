@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { AdminFood } from "@/server/admin/foods";
 import { foodCategories } from "@/lib/food-validation";
@@ -89,7 +88,6 @@ export function FoodManager({ foods }: { foods: AdminFood[] }) {
       </div>
       <div className={styles.toolbar}>
         <h2>Food management</h2>
-        <Link href="/#order">View restaurant ↗</Link>
         <button
           className="button"
           disabled={pending}

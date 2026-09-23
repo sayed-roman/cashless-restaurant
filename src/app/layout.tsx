@@ -1,5 +1,6 @@
 import { CartProvider } from "@/components/cart/cart-provider";
 import { CartDrawer } from "@/components/cart/cart-drawer";
+import { PublicChrome } from "@/components/layout/public-chrome";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
 import type { Metadata } from "next";
@@ -40,10 +41,13 @@ export default function RootLayout({
     <html lang="en" className={`${bodyFont.variable} ${headingFont.variable}`}>
       <body>
         <CartProvider>
-          <SiteHeader />
-          {children}
-          <SiteFooter />
-          <CartDrawer />
+          <PublicChrome
+            header={<SiteHeader />}
+            footer={<SiteFooter />}
+            cart={<CartDrawer />}
+          >
+            {children}
+          </PublicChrome>
         </CartProvider>
       </body>
     </html>
