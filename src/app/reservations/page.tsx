@@ -1,3 +1,5 @@
+import { AccountShell } from "@/components/account/account-shell";
+import { requireUser } from "@/server/auth/session";
 import Link from "next/link";
 import { myReservations } from "@/server/reservations/service";
 import { reservationDate } from "@/lib/reservation-rules";
@@ -8,6 +10,7 @@ export default async function ReservationsPage({
 }: {
   searchParams: Promise<{ page?: string }>;
 }) {
+  const user = await requireUser("/reservations");
   const query = await searchParams;
   const page = Math.max(
     1,
@@ -15,7 +18,7 @@ export default async function ReservationsPage({
   );
   const { rows, total } = await myReservations(page);
   return (
-    <main id="main" className="section wrap">
+    <AccountShell name={user.name}><main id="main" className="section wrap">
       <p className="eyebrow">Your next visit</p>
       <h1 className="section-title">My Reservations</h1>
       <p className="section-subtitle">
@@ -27,7 +30,7 @@ export default async function ReservationsPage({
       </Link>
       <div className={styles.list}>
         {rows.map((booking) => (
-          <article className={styles.card} key={booking.id}>
+          <article id={`reservation-${booking.id}`} className={styles.card} key={booking.id}>
             <div className={styles.heading}>
               <h2>{reservationDate(booking.scheduledAt)}</h2>
               <span className={styles.status}>{booking.status}</span>
@@ -55,13 +58,13 @@ export default async function ReservationsPage({
       )}
       <nav className={styles.pages} aria-label="Reservation pages">
         {page > 1 && (
-          <Link href={`/reservations?page=${page - 1}`}>← Previous</Link>
+          <Link className="button outline" href={`/reservations?page=${page - 1}`}>Previous</Link>
         )}
         <span>{total} reservations</span>
         {page * 20 < total && (
-          <Link href={`/reservations?page=${page + 1}`}>Next →</Link>
+          <Link className="button outline" href={`/reservations?page=${page + 1}`}>Next</Link>
         )}
       </nav>
-    </main>
+    </main></AccountShell>
   );
 }

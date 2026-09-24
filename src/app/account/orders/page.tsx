@@ -1,3 +1,5 @@
+import { AccountShell } from "@/components/account/account-shell";
+import { requireUser } from "@/server/auth/session";
 import Link from "next/link";
 import { resumePayment } from "./payment-actions";
 import { getMyOrders } from "@/server/orders/queries";
@@ -17,15 +19,16 @@ function money(amount: number, currency: string) {
 export default async function MyOrdersPage({ searchParams }: {
   searchParams: Promise<{ page?: string; payment?: string }>;
 }) {
+  const user = await requireUser("/account/orders");
   const params = await searchParams;
   const { orders, hasMore, page } = await getMyOrders(Number(params.page ?? 1));
   return (
-    <main id="main" className={`wrap ${styles.page}`}>
-      <Link href="/account" className={styles.back}>← My account</Link>
+    <AccountShell name={user.name}><main id="main" className={`wrap ${styles.page}`}>
+      
       <header className={styles.header}>
         <div><p className="eyebrow">Your Cashless account</p><h1 className="section-title">My Orders</h1>
           <p>All your favourites, with their latest order status.</p></div>
-        <Link href="/#order" className="button">Order Food →</Link>
+        <Link href="/#order" className="button">Order Food</Link>
       </header>
       {params.payment && <p role="status">{params.payment === "closed" ? "This payment session is closed. Check your payment status before placing another order. If payment is pending, wait for confirmation." : "Payment is temporarily unavailable. Please try again shortly."}</p>}
       {!orders.length ? (
@@ -36,7 +39,7 @@ export default async function MyOrdersPage({ searchParams }: {
         </section>
       ) : (
         <div className={styles.list}>{orders.map(order => (
-          <article className={styles.card} key={order.id}>
+          <article id={`order-${order.id}`} className={styles.card} key={order.id}>
             <div className={styles.top}>
               <div><h2>Pickup order</h2><time dateTime={order.createdAt.toISOString()}>{dateFormat.format(order.createdAt)} (Dhaka)</time></div>
               <span className={styles.badge} data-status={order.status}>{statusLabels[order.status]}</span>
@@ -59,6 +62,6 @@ export default async function MyOrdersPage({ searchParams }: {
         <span>Page {page}</span>
         {hasMore && <Link className="button outline" href={`/account/orders?page=${page + 1}`}>Next</Link>}
       </nav>}
-    </main>
+    </main></AccountShell>
   );
 }
