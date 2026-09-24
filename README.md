@@ -7,7 +7,7 @@ It combines customer ordering, authenticated table reservations, online payments
 ## Live Demo
 
 - **Production:** https://cashless-restaurant-i8iq.vercel.app
-- **Repository:** https://github.com/your-username/cashless-restaurant
+- **Repository:** https://github.com/sayed-roman/cashless-restaurant
 
 ## Features
 
@@ -203,6 +203,8 @@ Apply production migrations with `npx prisma migrate deploy`, configure the Stri
 
 Authentication, menu management, ordering, reservations, Stripe Sandbox payments, customer dashboards, admin operations, and Vercel deployment are implemented end to end.
 
-## License
 
-This project was created for educational and software engineering assessment purposes.
+
+## Purpose
+
+This project was built as a software engineering assessment and portfolio piece, demonstrating production-level architecture, authentication, payments, and role-based access control.
